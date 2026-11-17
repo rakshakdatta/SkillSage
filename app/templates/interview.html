@@ -1,0 +1,68 @@
+{% extends "base.html" %}
+{% block title %}Interview{% endblock %}
+{% block body_attrs %}data-session-id="{{ session_id }}" data-max-answer="{{ max_answer }}" data-signed-in="{{ 'true' if current_user else 'false' }}"{% endblock %}
+{% block content %}
+<div class="container">
+  <div id="loading" class="col card" aria-busy="true"><div class="skeleton"></div><div class="skeleton"></div><div class="skeleton"></div></div>
+  <div id="fatal" class="col alert error" role="alert" hidden></div>
+
+  <section id="interview" class="col" hidden>
+    <div class="row">
+      <span id="role-label" class="chip"></span>
+      <span id="progress-label" class="muted"></span>
+    </div>
+    <div id="stepper" class="stepper" aria-hidden="true"></div>
+
+    <article id="question-card" class="card question-card">
+      <span id="q-topic" class="chip plain"></span>
+      <h2 id="q-text" class="q"></h2>
+      <label class="field">
+        <span class="sr-only">Your answer</span>
+        <textarea id="answer" rows="8" maxlength="{{ max_answer }}" placeholder="Answer the way you would speak it in the interview. Aim for one to two minutes and give an example." aria-describedby="meters"></textarea>
+      </label>
+      <div class="answer-meta">
+        <div id="meters" class="meters" aria-live="polite">
+          <span id="m-words" class="meter">0 words</span>
+          <span id="m-time" class="meter">≈ 0s spoken</span>
+        </div>
+        <button id="submit" class="btn primary" type="button">Submit answer</button>
+      </div>
+      <p id="answer-error" class="alert error mt" role="alert" hidden></p>
+      <details class="tips">
+        <summary>Tips for a strong answer</summary>
+        <ul>
+          <li>Answer the question first, then explain.</li>
+          <li>Use an example from a real project, with a number if you can.</li>
+          <li>For stories, follow STAR: situation, task, action, result.</li>
+          <li>Speak in complete sentences. Spelling and casual wording are fine.</li>
+        </ul>
+      </details>
+    </article>
+
+    <article id="thinking" class="card thinking" role="status" hidden>
+      <span class="spinner" aria-hidden="true"></span>
+      <div><strong>Reviewing your answer…</strong><p class="muted small">Scoring relevance, depth, clarity, structure and grammar. AI reviews can take a few seconds.</p></div>
+    </article>
+
+    <article id="feedback-card" class="card" hidden>
+      <div id="feedback-body"></div>
+      <div class="row mt-lg">
+        <span id="fb-progress" class="muted small"></span>
+        <button id="next" class="btn primary" type="button">Next question →</button>
+      </div>
+    </article>
+  </section>
+
+  <section id="report" hidden>
+    <div id="report-root"></div>
+    <div class="row mt-lg no-print">
+      <button id="print" class="btn" type="button">Print / save as PDF</button>
+      <span class="chips">
+        {% if current_user %}<a class="btn" href="{{ url_for('pages.profile') }}">My progress</a>{% endif %}
+        <a class="btn primary" href="{{ url_for('pages.index') }}">Start a new interview</a>
+      </span>
+    </div>
+  </section>
+</div>
+{% endblock %}
+{% block scripts %}<script src="{{ url_for('static', filename='js/interview.js') }}" defer></script>{% endblock %}

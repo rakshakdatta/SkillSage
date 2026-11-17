@@ -1,0 +1,36 @@
+{% extends "base.html" %}
+{% block title %}{{ 'Create account' if mode == 'register' else 'Sign in' }}{% endblock %}
+{% block body_attrs %}data-mode="{{ mode }}"{% endblock %}
+{% block content %}
+<div class="container auth-wrap">
+  <div class="card auth-card">
+    <nav class="tabs" aria-label="Account">
+      <a href="{{ url_for('pages.login', **request.args) }}" {% if mode == 'login' %}aria-current="page"{% endif %}>Sign in</a>
+      <a href="{{ url_for('pages.register', **request.args) }}" {% if mode == 'register' %}aria-current="page"{% endif %}>Create account</a>
+    </nav>
+    <h1 class="auth-title">{{ 'Create your free account' if mode == 'register' else 'Welcome back' }}</h1>
+    <p class="muted">{{ 'Save every interview, watch your scores improve and see which skills to work on.' if mode == 'register' else 'Sign in to see your saved interviews and progress.' }}</p>
+
+    <form id="auth-form" novalidate>
+      {% if mode == 'register' %}
+      <label class="field"><span class="label">Your name</span>
+        <input id="name" type="text" maxlength="60" autocomplete="name" required></label>
+      {% endif %}
+      <label class="field"><span class="label">Email</span>
+        <input id="email" type="email" autocomplete="email" required></label>
+      <label class="field"><span class="label">Password</span>
+        <div class="pw-wrap">
+          <input id="password" type="password" minlength="8" maxlength="128" autocomplete="{{ 'new-password' if mode == 'register' else 'current-password' }}" required>
+          <button id="pw-toggle" class="pw-toggle" type="button" aria-label="Show password">Show</button>
+        </div>
+        {% if mode == 'register' %}<div class="pw-meter" aria-hidden="true"><i id="pw-meter-bar"></i></div>
+        <p id="pw-hint" class="hint">Use at least 8 characters. A short sentence works well.</p>{% endif %}
+      </label>
+      <p id="auth-error" class="alert error" role="alert" hidden></p>
+      <button id="auth-submit" class="btn primary block" type="submit">{{ 'Create account' if mode == 'register' else 'Sign in' }}</button>
+    </form>
+    <p class="hint mt-lg">{{ 'Your password is hashed, never stored in plain text.' if mode == 'register' else 'Forgot your password? Password reset is not available yet.' }}</p>
+  </div>
+</div>
+{% endblock %}
+{% block scripts %}<script src="{{ url_for('static', filename='js/auth.js') }}" defer></script>{% endblock %}

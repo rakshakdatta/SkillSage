@@ -1,0 +1,56 @@
+<!doctype html>
+<html lang="en" data-theme="light">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <meta name="description" content="SkillSage is an AI mock-interview coach: practise answers, get scored on relevance, depth, clarity, structure and grammar, and track your progress.">
+  <title>{% block title %}SkillSage{% endblock %} · Mock interview coach</title>
+  <script src="{{ url_for('static', filename='js/theme.js') }}"></script>
+  <link rel="icon" href="data:image/svg+xml,%3Csvg xmlns=%27http://www.w3.org/2000/svg%27 viewBox=%270 0 32 32%27%3E%3Crect width=%2732%27 height=%2732%27 rx=%278%27 fill=%27%235b5bf0%27/%3E%3Ctext x=%2716%27 y=%2723%27 font-size=%2720%27 font-family=%27Arial%27 font-weight=%27700%27 fill=%27white%27 text-anchor=%27middle%27%3ES%3C/text%3E%3C/svg%3E">
+  <link rel="stylesheet" href="{{ url_for('static', filename='css/app.css') }}">
+</head>
+<body {% block body_attrs %}{% endblock %}>
+  <div class="shell">
+    <aside class="side">
+      <a class="brand" href="{{ url_for('pages.index') }}"><span class="logo" aria-hidden="true">S</span><span class="brand-name">SkillSage</span></a>
+      <nav class="side-nav" aria-label="Main">
+        <a href="{{ url_for('pages.profile') if current_user else url_for('pages.login') }}" {% if request.endpoint in ('pages.profile', 'pages.history_item') %}aria-current="page"{% endif %}>
+          <svg viewBox="0 0 24 24" aria-hidden="true"><path d="M3 11l9-8 9 8v10a1 1 0 0 1-1 1h-5v-7H9v7H4a1 1 0 0 1-1-1z"/></svg><span>Dashboard</span></a>
+        <a href="{{ url_for('pages.index') }}" {% if request.endpoint in ('pages.index', 'pages.interview') %}aria-current="page"{% endif %}>
+          <svg viewBox="0 0 24 24" aria-hidden="true"><path d="M8 6l-6 6 6 6M16 6l6 6-6 6"/></svg><span>Practice</span></a>
+        <a href="{{ url_for('pages.profile') ~ '#history' if current_user else url_for('pages.login') }}">
+          <svg viewBox="0 0 24 24" aria-hidden="true"><path d="M4 20V10M10 20V4M16 20v-8M22 20H2"/></svg><span>History</span></a>
+        <a href="{{ url_for('pages.profile') ~ '#settings' if current_user else url_for('pages.register') }}">
+          <svg viewBox="0 0 24 24" aria-hidden="true"><circle cx="12" cy="8" r="4"/><path d="M4 21a8 8 0 0 1 16 0"/></svg><span>{{ 'Account' if current_user else 'Sign up' }}</span></a>
+      </nav>
+      <div class="side-card hide-sm">
+        <strong>{{ 'AI coach is on' if is_ai else 'Offline practice' }}</strong>
+        <p>{{ provider_name if is_ai else 'Rule-based scoring. Add a free Gemini or Groq key for deeper coaching.' }}</p>
+      </div>
+    </aside>
+
+    <div class="content">
+      <header class="top">
+        <div class="top-title">{% block heading %}{% endblock %}</div>
+        <span class="nav-spacer"></span>
+        <span class="badge {{ 'ai' if is_ai else 'offline' }}" title="{{ 'Answers are reviewed by this AI model' if is_ai else 'No AI key configured: rule-based scoring' }}">{{ provider_name }}</span>
+        <button id="theme-toggle" class="icon-btn" type="button" aria-label="Switch between light and dark theme">🌙</button>
+        {% if current_user %}
+          <a class="user-chip" href="{{ url_for('pages.profile') }}"><span class="avatar" aria-hidden="true">{{ current_user.name[:1]|upper }}</span><span class="name">{{ current_user.name.split(' ')[0] }}</span></a>
+          <button id="sign-out" class="btn small" type="button">Sign out</button>
+        {% else %}
+          <a class="btn small hide-xs" href="{{ url_for('pages.login') }}">Sign in</a>
+          <a class="btn small primary" href="{{ url_for('pages.register') }}">Sign up</a>
+        {% endif %}
+      </header>
+      <main>
+        {% block content %}{% endblock %}
+      </main>
+      <footer class="footer">SkillSage is a practice tool. Feedback can be wrong, so treat it as a coach, not a verdict.</footer>
+    </div>
+  </div>
+  <script src="{{ url_for('static', filename='js/app.js') }}" defer></script>
+  <script src="{{ url_for('static', filename='js/render.js') }}" defer></script>
+  {% block scripts %}{% endblock %}
+</body>
+</html>

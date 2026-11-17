@@ -1,0 +1,86 @@
+{% extends "base.html" %}
+{% block title %}Dashboard{% endblock %}
+{% block heading %}Dashboard{% endblock %}
+{% block content %}
+<div class="container">
+  <div class="dash">
+    <div class="dash-main">
+      <section class="banner">
+        <h1>Welcome back, <span id="p-first">{{ current_user.name.split(' ')[0] }}</span> 👋</h1>
+        <p id="banner-sub">Keep practising and get closer to your target role.</p>
+        <div class="big-num"><span id="b-avg">–</span><small id="b-delta">no interviews yet</small></div>
+        <div class="bar" aria-hidden="true"><i id="b-bar"></i></div>
+        <a class="btn" href="{{ url_for('pages.index') }}">Start an interview →</a>
+      </section>
+
+      <div id="tiles" class="tiles" aria-live="polite"></div>
+
+      <section class="card">
+        <div class="card-title"><div><h2>Skill assessment</h2><span class="muted small">Your average on each skill, across completed interviews</span></div></div>
+        <div id="skills"></div>
+      </section>
+
+      <div class="grid-2">
+        <section class="card"><div class="card-title"><h2>Score over time</h2><span id="trend-note" class="muted small"></span></div><div id="trend"></div></section>
+        <section class="card"><div class="card-title"><h2>Interview readiness</h2></div><div id="ready"></div><div id="focus" class="mt-lg"></div></section>
+      </div>
+
+      <section class="card" id="history-card">
+        <div class="card-title"><h2 id="history-title">Interview history</h2></div>
+        <div id="history" class="table-wrap"></div>
+      </section>
+    </div>
+
+    <aside class="dash-rail" id="settings">
+      <section class="card">
+        <div class="rail-profile">
+          <span class="avatar big" aria-hidden="true">{{ current_user.name[:1]|upper }}</span>
+          <div><h2 id="p-name">{{ current_user.name }}</h2><p class="muted" id="p-meta">{{ current_user.email }}</p></div>
+        </div>
+        <div class="kv"><span>Target role</span><span class="v" id="k-role">–</span></div>
+        <div class="kv"><span>Level</span><span class="v" id="k-level">–</span></div>
+        <div class="kv"><span>Member since</span><span class="muted" id="k-since">–</span></div>
+      </section>
+
+      <section class="card">
+        <h2>Edit profile</h2>
+        <form id="profile-form" novalidate>
+          <label class="field"><span class="label">Name</span><input id="f-name" type="text" maxlength="60" required></label>
+          <label class="field"><span class="label">Target role</span><input id="f-role" type="text" maxlength="60" placeholder="e.g. Backend Developer"></label>
+          <label class="field"><span class="label">Level</span>
+            <select id="f-level"><option value="intern">Intern</option><option value="junior">Junior</option><option value="mid">Mid</option><option value="senior">Senior</option></select></label>
+          <p id="profile-error" class="alert error" role="alert" hidden></p>
+          <button class="btn primary block" type="submit">Save profile</button>
+        </form>
+      </section>
+
+      <section class="card">
+        <h2>Change password</h2>
+        <form id="password-form" novalidate>
+          <label class="field"><span class="label">Current password</span><input id="pw-current" type="password" autocomplete="current-password" required></label>
+          <label class="field"><span class="label">New password</span><input id="pw-new" type="password" autocomplete="new-password" minlength="8" maxlength="128" required></label>
+          <p id="password-error" class="alert error" role="alert" hidden></p>
+          <button class="btn primary block" type="submit">Update password</button>
+        </form>
+      </section>
+
+      <section class="card danger-zone">
+        <h2>Delete account</h2>
+        <p class="muted small">Permanently removes your account and every saved interview. This cannot be undone.</p>
+        <button id="delete-open" class="btn danger block" type="button">Delete my account</button>
+      </section>
+    </aside>
+  </div>
+
+  <dialog id="delete-dialog" aria-labelledby="delete-title">
+    <form id="delete-form" method="dialog" novalidate>
+      <h2 id="delete-title">Delete your account?</h2>
+      <p class="muted">Type your password to confirm. All your interviews will be deleted.</p>
+      <label class="field"><span class="label">Password</span><input id="delete-password" type="password" autocomplete="current-password" required></label>
+      <p id="delete-error" class="alert error" role="alert" hidden></p>
+      <div class="row"><button id="delete-cancel" class="btn" type="button">Cancel</button><button class="btn danger solid" type="submit">Delete everything</button></div>
+    </form>
+  </dialog>
+</div>
+{% endblock %}
+{% block scripts %}<script src="{{ url_for('static', filename='js/profile.js') }}" defer></script>{% endblock %}

@@ -1,0 +1,16 @@
+{% extends "base.html" %}
+{% block title %}Saved interview{% endblock %}
+{% block body_attrs %}data-interview-id="{{ interview_id }}"{% endblock %}
+{% block content %}
+<div class="container">
+  <p class="no-print"><a href="{{ url_for('pages.profile') }}">← Back to my progress</a></p>
+  <div id="loading" class="card" aria-busy="true"><div class="skeleton"></div><div class="skeleton"></div><div class="skeleton"></div></div>
+  <div id="fatal" class="alert error" role="alert" hidden></div>
+  <div id="report-root"></div>
+  <div id="actions" class="row mt-lg no-print" hidden>
+    <button id="print" class="btn" type="button">Print / save as PDF</button>
+    <a class="btn primary" href="{{ url_for('pages.index') }}">Start a new interview</a>
+  </div>
+</div>
+{% endblock %}
+{% block scripts %}<script src="{{ url_for('static', filename='js/history.js') }}" defer></script>{% endblock %}

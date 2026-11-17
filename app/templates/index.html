@@ -1,0 +1,95 @@
+{% extends "base.html" %}
+{% block content %}
+<div class="container">
+  <section class="hero">
+    <div>
+      <span class="eyebrow">AI mock-interview coach</span>
+      <h1>Practise the interview <span class="grad">before the real one.</span></h1>
+      <p class="lead">Answer realistic questions in your own words. Get a score and specific coaching on every answer, including how well your sentences are formed, then track your progress over time.</p>
+      <ul class="ticks">
+        <li>Scored on relevance, depth, clarity, structure and grammar</li>
+        <li>Fix-it suggestions: "You said" vs "Try" for every grammar slip</li>
+        <li>A final report with a practice plan you can print or save</li>
+      </ul>
+    </div>
+
+    <form id="setup-form" class="card setup-card" novalidate
+          data-default-role="{{ current_user.target_role if current_user else '' }}"
+          data-default-level="{{ current_user.level if current_user else 'junior' }}">
+      <h2>Start an interview</h2>
+      {% if current_user %}
+      <div class="welcome"><span class="avatar" aria-hidden="true">{{ current_user.name[:1]|upper }}</span> Welcome back, {{ current_user.name.split(' ')[0] }}. This interview will be saved to your profile.</div>
+      {% else %}
+      <p class="muted small">No account needed. <a href="{{ url_for('pages.register') }}">Create one</a> to save your history.</p>
+      {% endif %}
+
+      {% if is_ai %}
+      <div class="alert info">Answers and resume text are sent to <strong>{{ provider_name }}</strong>. Contact details are removed from resumes first.</div>
+      {% else %}
+      <div class="alert warn"><strong>Offline practice mode.</strong> Rule-based scoring, no AI. Add a free Gemini or Groq key for deeper coaching.</div>
+      {% endif %}
+
+      <label class="field">
+        <span class="label">Role you are interviewing for</span>
+        <input id="role" name="role" type="text" list="role-list" maxlength="60" placeholder="e.g. Backend Developer" required autocomplete="off">
+        <datalist id="role-list">{% for r in roles %}<option value="{{ r }}">{% endfor %}</datalist>
+      </label>
+      <div class="chips mb" id="role-chips">
+        {% for r in roles[:5] %}<button class="chip" type="button" data-role="{{ r }}">{{ r }}</button>{% endfor %}
+      </div>
+
+      <div class="field">
+        <span class="label">Your level</span>
+        <div class="seg" role="radiogroup" aria-label="Level">
+          <label><input type="radio" name="level" value="intern"><span>Intern</span></label>
+          <label><input type="radio" name="level" value="junior" checked><span>Junior</span></label>
+          <label><input type="radio" name="level" value="mid"><span>Mid</span></label>
+          <label><input type="radio" name="level" value="senior"><span>Senior</span></label>
+        </div>
+      </div>
+
+      <div class="field">
+        <span class="label">Number of questions</span>
+        <div class="seg" role="radiogroup" aria-label="Number of questions">
+          <label><input type="radio" name="total" value="3"><span>3 · quick</span></label>
+          <label><input type="radio" name="total" value="5" checked><span>5</span></label>
+          <label><input type="radio" name="total" value="8"><span>8 · full round</span></label>
+        </div>
+      </div>
+
+      <details class="resume-box">
+        <summary>Add your resume for tailored questions (optional)</summary>
+        <label class="field mt"><span class="label">Upload a PDF or .txt file</span>
+          <input id="resume-file" type="file" accept=".pdf,.txt,application/pdf,text/plain"></label>
+        <label class="field"><span class="label">…or paste the text</span>
+          <textarea id="resume-text" rows="5" maxlength="{{ max_resume }}" placeholder="Paste your resume text here"></textarea></label>
+        <p id="resume-status" class="hint" role="status"></p>
+      </details>
+
+      <p id="setup-error" class="alert error" role="alert" hidden></p>
+      <button id="start" class="btn primary block" type="submit">Start interview →</button>
+    </form>
+  </section>
+
+  <section class="section">
+    <div class="section-head"><span class="eyebrow">How it works</span><h2>Three steps to a better interview</h2></div>
+    <div class="grid-3">
+      <div class="card step"><div class="num">1</div><h3>Choose a role</h3><p class="muted">Pick the role and your level. Add a resume if you want questions based on your own experience.</p></div>
+      <div class="card step"><div class="num">2</div><h3>Answer like you would speak</h3><p class="muted">One question at a time, in your own words. Aim for one to two minutes, with an example.</p></div>
+      <div class="card step"><div class="num">3</div><h3>Get coached</h3><p class="muted">Instant scores, grammar fixes, a sample answer and a practice plan. Sign in to keep your history.</p></div>
+    </div>
+  </section>
+
+  <section class="section">
+    <div class="section-head"><span class="eyebrow">What you are scored on</span><h2>Five skills interviewers notice</h2></div>
+    <div class="skills-grid">
+      <div class="card skill-card"><div class="emoji">🎯</div><h3>Relevance</h3><p>Did you answer the question that was asked?</p></div>
+      <div class="card skill-card"><div class="emoji">🔍</div><h3>Depth</h3><p>Examples, numbers and trade-offs.</p></div>
+      <div class="card skill-card"><div class="emoji">💬</div><h3>Clarity</h3><p>Concise, easy to follow, no rambling.</p></div>
+      <div class="card skill-card"><div class="emoji">🧩</div><h3>Structure</h3><p>A logical order, like STAR for stories.</p></div>
+      <div class="card skill-card"><div class="emoji">✍️</div><h3>Grammar</h3><p>Complete, well-formed sentences. Spelling and casual speech are not penalised.</p></div>
+    </div>
+  </section>
+</div>
+{% endblock %}
+{% block scripts %}<script src="{{ url_for('static', filename='js/home.js') }}" defer></script>{% endblock %}

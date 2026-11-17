@@ -1,0 +1,795 @@
+{
+  "tracks": {
+    "frontend": {
+      "label": "Frontend Developer",
+      "questions": [
+        {
+          "q": "Explain how a browser turns HTML, CSS and JavaScript into pixels on the screen.",
+          "topic": "Rendering",
+          "keywords": [
+            "dom",
+            "cssom",
+            "render tree",
+            "layout",
+            "paint",
+            "reflow",
+            "repaint",
+            "javascript"
+          ],
+          "ideal": "The browser parses HTML into the DOM and CSS into the CSSOM, combines them into a render tree, runs layout to compute sizes and positions, then paints and composites layers. JavaScript can block parsing, and changing layout properties triggers expensive reflows, so I batch DOM reads and writes and prefer transforms for animation."
+        },
+        {
+          "q": "What is a closure in JavaScript, and what is the difference between let, const and var?",
+          "topic": "JavaScript fundamentals",
+          "keywords": [
+            "closure",
+            "scope",
+            "lexical",
+            "hoisting",
+            "block",
+            "function scope",
+            "reassign",
+            "const"
+          ],
+          "ideal": "A closure is a function that keeps access to variables from the scope where it was created, even after that scope has finished. var is function scoped and hoisted, while let and const are block scoped; const prevents reassignment but not mutation. I use const by default and closures for things like private state and callbacks."
+        },
+        {
+          "q": "How would you find and fix performance problems in a slow component-based app such as React?",
+          "topic": "Performance",
+          "keywords": [
+            "profiler",
+            "re-render",
+            "memo",
+            "lazy",
+            "code splitting",
+            "bundle",
+            "virtualization",
+            "debounce"
+          ],
+          "ideal": "I measure first with the browser performance tab and the React profiler to find unnecessary re-renders and large bundles. Then I use memoisation where it helps, split code and lazy load routes, virtualise long lists, debounce expensive handlers and optimise images. I re-measure to confirm each change actually helped."
+        },
+        {
+          "q": "How do you manage state in a large frontend app, and when would you avoid a global store?",
+          "topic": "State management",
+          "keywords": [
+            "local state",
+            "context",
+            "redux",
+            "server state",
+            "cache",
+            "lift",
+            "derived",
+            "global"
+          ],
+          "ideal": "I keep state as local as possible, lift it only when siblings need it, and treat server data separately with a caching library. A global store is for truly shared client state like auth or theme; putting everything in it adds boilerplate and unnecessary re-renders. Derived values should be computed, not stored."
+        },
+        {
+          "q": "How do you make a web page accessible to people who use keyboards or screen readers?",
+          "topic": "Accessibility",
+          "keywords": [
+            "semantic",
+            "aria",
+            "keyboard",
+            "focus",
+            "contrast",
+            "alt",
+            "screen reader",
+            "label"
+          ],
+          "ideal": "I start with semantic HTML, label every form control, give images meaningful alt text and make sure everything works with the keyboard with a visible focus state. I check colour contrast, use ARIA only where native elements are not enough, and test with a screen reader and an automated audit."
+        },
+        {
+          "q": "What is a CORS error, why does it happen and how do you fix it properly?",
+          "topic": "Web security",
+          "keywords": [
+            "origin",
+            "preflight",
+            "access-control-allow-origin",
+            "header",
+            "browser",
+            "server",
+            "credentials",
+            "same-origin"
+          ],
+          "ideal": "Browsers enforce the same-origin policy, so a page can only call another origin if that server returns the right Access-Control headers. Non-simple requests trigger a preflight OPTIONS request. The fix is on the server: allow the specific frontend origin, methods and headers, and never use a wildcard together with credentials."
+        }
+      ]
+    },
+    "backend": {
+      "label": "Backend Developer",
+      "questions": [
+        {
+          "q": "Design a REST API for a to-do app. Which endpoints, status codes and validation would you use?",
+          "topic": "API design",
+          "keywords": [
+            "resource",
+            "get",
+            "post",
+            "put",
+            "delete",
+            "status code",
+            "404",
+            "400",
+            "validation",
+            "pagination",
+            "idempotent"
+          ],
+          "ideal": "I model todos as a resource: GET and POST on /todos, and GET, PUT, PATCH and DELETE on /todos/{id}. I return 201 on create, 200 on success, 400 for invalid input, 404 when missing and 401 or 403 for auth problems. I validate the payload, paginate lists and keep PUT and DELETE idempotent."
+        },
+        {
+          "q": "What is a database index, how does it help and what does it cost?",
+          "topic": "Databases",
+          "keywords": [
+            "b-tree",
+            "lookup",
+            "read",
+            "write",
+            "overhead",
+            "query plan",
+            "composite",
+            "selectivity"
+          ],
+          "ideal": "An index, usually a B-tree, lets the database find rows without scanning the whole table, which speeds up reads, joins and sorting. The cost is extra storage and slower writes because every insert or update must maintain the index. I add indexes for frequent filters, check the query plan and avoid indexing low-selectivity columns."
+        },
+        {
+          "q": "How do you handle authentication and authorization in an API?",
+          "topic": "Security",
+          "keywords": [
+            "jwt",
+            "session",
+            "hash",
+            "bcrypt",
+            "role",
+            "token",
+            "expiry",
+            "https",
+            "refresh"
+          ],
+          "ideal": "I hash passwords with bcrypt, issue short-lived signed tokens such as JWTs over HTTPS and refresh them safely. Authentication proves who the caller is; authorization checks on the server what they may do, using roles and ownership checks on every request. I never trust IDs or roles sent by the client."
+        },
+        {
+          "q": "What is the N+1 query problem and how do you fix it?",
+          "topic": "Performance",
+          "keywords": [
+            "join",
+            "fetch",
+            "batch",
+            "lazy",
+            "eager",
+            "orm",
+            "query",
+            "index"
+          ],
+          "ideal": "N+1 happens when I load a list with one query and then run one extra query per item, often because of lazy loading in an ORM. I fix it with a join or eager fetch, batch loading, or a single query with IN. I confirm with query logging and add the right indexes."
+        },
+        {
+          "q": "How would you design a rate limiter for an API?",
+          "topic": "System design",
+          "keywords": [
+            "token bucket",
+            "sliding window",
+            "redis",
+            "per user",
+            "ip",
+            "429",
+            "counter",
+            "distributed"
+          ],
+          "ideal": "I would limit per user or API key, falling back to IP, with a token bucket or sliding window counter. In a multi-server setup the counters live in Redis with atomic operations and expiry. When the limit is hit I return 429 with a Retry-After header, and I make limits configurable per endpoint."
+        },
+        {
+          "q": "Where would you use caching in a backend, and how do you handle cache invalidation?",
+          "topic": "Caching",
+          "keywords": [
+            "ttl",
+            "redis",
+            "cdn",
+            "invalidation",
+            "stale",
+            "write-through",
+            "key",
+            "consistency"
+          ],
+          "ideal": "I cache expensive, read-heavy and slow-changing data, such as external API results or computed lists, in Redis or a CDN. I pick clear keys and a TTL, and invalidate on writes or use write-through for strong consistency. I accept slightly stale data only where it is safe."
+        }
+      ]
+    },
+    "fullstack": {
+      "label": "Full Stack Developer",
+      "questions": [
+        {
+          "q": "Walk me through everything that happens from clicking Login in the browser to seeing the dashboard.",
+          "topic": "End-to-end flow",
+          "keywords": [
+            "request",
+            "api",
+            "token",
+            "cookie",
+            "hash",
+            "database",
+            "response",
+            "redirect",
+            "state"
+          ],
+          "ideal": "The frontend validates the form and sends a POST to the login API. The server looks up the user, compares the password hash, and returns a token or sets a cookie. The client stores the auth state, redirects to the dashboard and fetches the data with that token, while the server checks the token and role on every request."
+        },
+        {
+          "q": "How do you keep the frontend and backend in sync, so API changes do not break the UI?",
+          "topic": "API contracts",
+          "keywords": [
+            "contract",
+            "openapi",
+            "validation",
+            "types",
+            "dto",
+            "version",
+            "tests",
+            "schema"
+          ],
+          "ideal": "I treat the API as a contract described by a schema such as OpenAPI, generate or share types, and validate requests on the server. Changes are backward compatible or versioned, and contract or integration tests catch breaks in CI before they reach users."
+        },
+        {
+          "q": "How would you deploy a full-stack app and keep its secrets safe?",
+          "topic": "Deployment",
+          "keywords": [
+            "environment variables",
+            "docker",
+            "ci",
+            "https",
+            "secrets",
+            "build",
+            "logs",
+            "database"
+          ],
+          "ideal": "I build the app in CI, package it in containers, and deploy behind HTTPS. Secrets such as database passwords and API keys come from environment variables or a secret manager, never from the repository. I add health checks, logging and backups for the database."
+        },
+        {
+          "q": "What are the trade-offs between server-side rendering and client-side rendering?",
+          "topic": "Rendering strategy",
+          "keywords": [
+            "seo",
+            "first load",
+            "hydration",
+            "server",
+            "client",
+            "cache",
+            "interactivity",
+            "performance"
+          ],
+          "ideal": "Server-side rendering sends ready HTML, which is better for SEO and first paint, but uses server resources and needs hydration. Client-side rendering ships a bundle and renders in the browser, which suits highly interactive apps but can delay first content. Many apps mix both per page."
+        },
+        {
+          "q": "How do you handle file uploads securely?",
+          "topic": "Security",
+          "keywords": [
+            "size limit",
+            "type",
+            "validate",
+            "storage",
+            "scan",
+            "filename",
+            "content-type",
+            "path"
+          ],
+          "ideal": "I limit the file size, allow only expected types and verify the real content, not just the extension or content-type header. I generate my own file names to avoid path traversal, store files outside the web root or in object storage, and scan them if they come from untrusted users."
+        },
+        {
+          "q": "A bug happens only in production. How do you investigate it?",
+          "topic": "Debugging",
+          "keywords": [
+            "logs",
+            "reproduce",
+            "monitoring",
+            "metrics",
+            "trace",
+            "rollback",
+            "feature flag",
+            "hypothesis"
+          ],
+          "ideal": "I check logs, metrics and traces around the time of the failures, look for recent deploys or config differences, and form a hypothesis I can test. I try to reproduce it in staging with production-like data, roll back or use a feature flag if users are hurt, and add a test and better logging afterwards."
+        }
+      ]
+    },
+    "data": {
+      "label": "Data Analyst",
+      "questions": [
+        {
+          "q": "Explain the difference between INNER, LEFT and FULL joins, with an example.",
+          "topic": "SQL",
+          "keywords": [
+            "join",
+            "matching",
+            "null",
+            "rows",
+            "left",
+            "inner",
+            "key",
+            "full"
+          ],
+          "ideal": "INNER JOIN returns only rows that match in both tables. LEFT JOIN keeps every row from the left table and fills NULLs where there is no match, for example all customers with their orders if any. FULL JOIN keeps unmatched rows from both sides. I choose based on whether missing matches matter."
+        },
+        {
+          "q": "How do you clean a messy dataset before analysis?",
+          "topic": "Data cleaning",
+          "keywords": [
+            "missing",
+            "duplicates",
+            "outliers",
+            "types",
+            "standardize",
+            "validate",
+            "null",
+            "impute"
+          ],
+          "ideal": "I profile the data first: check types, missing values, duplicates and outliers. Then I fix formats, standardise categories, decide whether to drop or impute missing values depending on the cause, and validate against known totals. I document every step so the result is reproducible."
+        },
+        {
+          "q": "What is the difference between correlation and causation? Give an example.",
+          "topic": "Statistics",
+          "keywords": [
+            "correlation",
+            "causation",
+            "confounding",
+            "experiment",
+            "a/b",
+            "example",
+            "variable"
+          ],
+          "ideal": "Correlation means two variables move together; causation means one actually causes the other. Ice cream sales and sunburn both rise in summer because of the weather, a confounding variable. To establish causation I would run a controlled experiment such as an A/B test."
+        },
+        {
+          "q": "How do you decide which chart to use for a given question?",
+          "topic": "Visualisation",
+          "keywords": [
+            "line",
+            "bar",
+            "scatter",
+            "trend",
+            "comparison",
+            "distribution",
+            "audience",
+            "message"
+          ],
+          "ideal": "I start from the question and the audience. Line charts show trends over time, bars compare categories, scatter plots show relationships, and histograms show distributions. I avoid decoration, label clearly and make the key message obvious."
+        },
+        {
+          "q": "How would you design and analyse an A/B test?",
+          "topic": "Experimentation",
+          "keywords": [
+            "hypothesis",
+            "sample size",
+            "control",
+            "significance",
+            "p-value",
+            "metric",
+            "duration",
+            "random"
+          ],
+          "ideal": "I define a hypothesis and one primary metric, randomly split users into control and variant, and calculate the sample size and duration up front. After the test I check statistical significance and practical impact, watch for bias such as stopping early, and report the result with confidence intervals."
+        },
+        {
+          "q": "A key metric dropped 20% this week. How do you investigate?",
+          "topic": "Problem solving",
+          "keywords": [
+            "segment",
+            "data quality",
+            "seasonality",
+            "release",
+            "funnel",
+            "compare",
+            "hypothesis",
+            "tracking"
+          ],
+          "ideal": "First I check data quality and tracking changes, then compare with the same period before to rule out seasonality. I segment by platform, region and user type to find where the drop is concentrated, look at the funnel step by step, and check releases or campaigns, then share findings with a clear recommendation."
+        }
+      ]
+    },
+    "devops": {
+      "label": "DevOps Engineer",
+      "questions": [
+        {
+          "q": "What is CI/CD and how would you set up a pipeline for a web app?",
+          "topic": "CI/CD",
+          "keywords": [
+            "build",
+            "test",
+            "lint",
+            "deploy",
+            "artifact",
+            "stages",
+            "rollback",
+            "trigger"
+          ],
+          "ideal": "CI runs on every push: install, lint, run tests and build an artifact. CD then deploys that same artifact automatically to staging and, after approval or checks, to production. I keep stages fast, cache dependencies, and make sure there is an easy rollback."
+        },
+        {
+          "q": "Explain the difference between containers and virtual machines.",
+          "topic": "Containers",
+          "keywords": [
+            "kernel",
+            "isolation",
+            "image",
+            "lightweight",
+            "hypervisor",
+            "docker",
+            "portability",
+            "os"
+          ],
+          "ideal": "A virtual machine runs a full guest operating system on a hypervisor, while containers share the host kernel and isolate processes, so they are lighter and start faster. Images make deployments portable and reproducible. VMs give stronger isolation, so I choose based on the security and workload needs."
+        },
+        {
+          "q": "How do you monitor a production service and decide when to alert?",
+          "topic": "Observability",
+          "keywords": [
+            "metrics",
+            "logs",
+            "traces",
+            "latency",
+            "error rate",
+            "slo",
+            "threshold",
+            "dashboard"
+          ],
+          "ideal": "I collect metrics, logs and traces and watch the golden signals: latency, traffic, errors and saturation. I define SLOs and alert on user-facing symptoms such as error rate or latency, not every small blip, so alerts are actionable. Dashboards and runbooks help the on-call engineer respond quickly."
+        },
+        {
+          "q": "How would you roll out a risky change with minimal downtime?",
+          "topic": "Deployment strategy",
+          "keywords": [
+            "canary",
+            "blue-green",
+            "feature flag",
+            "rollback",
+            "health check",
+            "gradual",
+            "monitor",
+            "traffic"
+          ],
+          "ideal": "I would use a canary or blue-green deployment so only a small share of traffic sees the change first, guarded by health checks and a feature flag. I watch error rates and latency, expand gradually and keep an instant rollback path. Database changes are made backward compatible."
+        },
+        {
+          "q": "What is infrastructure as code and why is it useful?",
+          "topic": "IaC",
+          "keywords": [
+            "terraform",
+            "reproducible",
+            "version control",
+            "drift",
+            "review",
+            "declarative",
+            "automation",
+            "state"
+          ],
+          "ideal": "Infrastructure as code describes servers and networks in files, such as Terraform, stored in version control. It makes environments reproducible, reviewable and auditable, reduces configuration drift and allows quick recovery. Changes go through pull requests and automated plans before being applied."
+        },
+        {
+          "q": "A service is slow and its CPU is at 100 percent. How do you troubleshoot?",
+          "topic": "Troubleshooting",
+          "keywords": [
+            "top",
+            "profile",
+            "logs",
+            "load",
+            "bottleneck",
+            "scale",
+            "recent change",
+            "process"
+          ],
+          "ideal": "I check which process uses the CPU, compare against recent deploys and traffic, and look at logs and metrics for errors or spikes. I profile to find hot code paths or runaway queries, mitigate by scaling out or rolling back if needed, and then fix the root cause and add an alert."
+        }
+      ]
+    },
+    "qa": {
+      "label": "QA Engineer",
+      "questions": [
+        {
+          "q": "What is the difference between unit, integration and end-to-end tests?",
+          "topic": "Testing levels",
+          "keywords": [
+            "isolated",
+            "mock",
+            "components",
+            "user flow",
+            "speed",
+            "pyramid",
+            "unit",
+            "integration"
+          ],
+          "ideal": "Unit tests check one function in isolation, usually with mocks, and are fast. Integration tests check that components such as the API and database work together. End-to-end tests drive the whole app like a user, so they are the slowest and most brittle. I follow the test pyramid: many unit, fewer integration, a few critical end-to-end flows."
+        },
+        {
+          "q": "How do you decide what to automate and what to test manually?",
+          "topic": "Test strategy",
+          "keywords": [
+            "repeatable",
+            "regression",
+            "risk",
+            "cost",
+            "exploratory",
+            "stable",
+            "frequently",
+            "value"
+          ],
+          "ideal": "I automate stable, repeatable, high-value checks such as regression and smoke tests that run often. I keep manual and exploratory testing for new features, usability and areas that change a lot. I prioritise by risk and the cost of maintaining the automation."
+        },
+        {
+          "q": "Write test cases for a login page.",
+          "topic": "Test design",
+          "keywords": [
+            "valid",
+            "invalid",
+            "empty",
+            "lockout",
+            "password",
+            "boundary",
+            "security",
+            "error message"
+          ],
+          "ideal": "I would cover valid login, wrong password, unknown user, empty fields, and boundary lengths. I would also test password masking, account lockout after repeated failures, SQL injection attempts, session expiry, the remember-me option, keyboard use and clear, non-revealing error messages."
+        },
+        {
+          "q": "How do you write a good bug report?",
+          "topic": "Communication",
+          "keywords": [
+            "steps to reproduce",
+            "expected",
+            "actual",
+            "environment",
+            "severity",
+            "screenshot",
+            "logs",
+            "title"
+          ],
+          "ideal": "A good report has a clear title, exact steps to reproduce, expected versus actual result, the environment such as browser, version and device, and attachments like screenshots or logs. I add severity and impact, and I check first that it is not already reported."
+        },
+        {
+          "q": "What is a flaky test and how would you fix one?",
+          "topic": "Automation",
+          "keywords": [
+            "timing",
+            "wait",
+            "shared state",
+            "isolation",
+            "retry",
+            "deterministic",
+            "root cause",
+            "environment"
+          ],
+          "ideal": "A flaky test passes and fails without code changes, usually because of timing, shared state or an unstable environment. I reproduce it, replace sleeps with explicit waits, isolate test data, make it deterministic and fix the root cause. Retries are only a temporary measure, and I quarantine the test meanwhile."
+        },
+        {
+          "q": "Explain boundary value analysis and equivalence partitioning.",
+          "topic": "Test techniques",
+          "keywords": [
+            "boundary",
+            "partition",
+            "valid",
+            "invalid",
+            "min",
+            "max",
+            "class",
+            "edge"
+          ],
+          "ideal": "Equivalence partitioning splits inputs into classes that should behave the same, so one test per class is enough. Boundary value analysis tests the edges of those classes, such as the minimum, maximum and just outside them, where bugs are most common. For an age field of 18 to 60 I would test 17, 18, 60 and 61."
+        }
+      ]
+    },
+    "general": {
+      "label": "Software Engineer",
+      "questions": [
+        {
+          "q": "Explain the difference between an array and a linked list. When would you pick each?",
+          "topic": "Data structures",
+          "keywords": [
+            "contiguous",
+            "pointer",
+            "random access",
+            "insertion",
+            "memory",
+            "o(1)",
+            "o(n)",
+            "node"
+          ],
+          "ideal": "An array stores elements contiguously, giving O(1) random access but costly insertion in the middle. A linked list stores nodes with pointers, so insertion and deletion are cheap when I already have the node, but access is O(n) and it uses more memory. I default to arrays or dynamic lists unless I need frequent insertions."
+        },
+        {
+          "q": "What is Big-O notation? Compare O(n) and O(log n) with an example.",
+          "topic": "Complexity",
+          "keywords": [
+            "growth",
+            "input size",
+            "binary search",
+            "linear",
+            "scalable",
+            "worst case",
+            "o(n)",
+            "log"
+          ],
+          "ideal": "Big-O describes how running time grows as the input size grows, usually in the worst case. A linear search is O(n) because it may check every item, while binary search on sorted data is O(log n) because it halves the search space each step, which scales far better for large inputs."
+        },
+        {
+          "q": "Explain the four pillars of object-oriented programming with a real example.",
+          "topic": "OOP",
+          "keywords": [
+            "encapsulation",
+            "inheritance",
+            "polymorphism",
+            "abstraction",
+            "class",
+            "object",
+            "interface",
+            "method"
+          ],
+          "ideal": "Encapsulation hides internal state behind methods, abstraction exposes only what is needed, inheritance reuses behaviour from a parent class, and polymorphism lets different classes be used through the same interface. For payments, a Payment interface with CardPayment and UpiPayment classes shows all four."
+        },
+        {
+          "q": "What is the difference between a process and a thread?",
+          "topic": "Operating systems",
+          "keywords": [
+            "memory",
+            "shared",
+            "context switch",
+            "concurrency",
+            "parallel",
+            "lock",
+            "isolated",
+            "resources"
+          ],
+          "ideal": "A process is an independent program with its own memory space, while threads run inside a process and share its memory. Threads are lighter and switch faster but need locks to avoid race conditions. Processes are better isolated, so a crash in one does not affect another."
+        },
+        {
+          "q": "How does a hash map work and how does it handle collisions?",
+          "topic": "Data structures",
+          "keywords": [
+            "hash function",
+            "bucket",
+            "collision",
+            "chaining",
+            "open addressing",
+            "o(1)",
+            "resize",
+            "key"
+          ],
+          "ideal": "A hash map uses a hash function to turn a key into an index in an array of buckets, giving average O(1) lookups. Collisions, when two keys hash to the same bucket, are handled by chaining with a list or by open addressing. The map resizes when it gets too full to keep operations fast."
+        },
+        {
+          "q": "How do you test and review code before it is merged?",
+          "topic": "Engineering practice",
+          "keywords": [
+            "unit test",
+            "review",
+            "readable",
+            "edge case",
+            "ci",
+            "small",
+            "feedback",
+            "coverage"
+          ],
+          "ideal": "I write unit tests for the main paths and edge cases, run linting and the CI pipeline, and keep pull requests small and focused. Reviewers check correctness, readability, security and test quality, and I respond to feedback constructively."
+        }
+      ]
+    }
+  },
+  "behavioral": [
+    {
+      "q": "Tell me about a challenging project you worked on and what you personally contributed.",
+      "topic": "Project ownership",
+      "keywords": [
+        "project",
+        "team",
+        "challenge",
+        "contributed",
+        "built",
+        "result",
+        "impact",
+        "learned"
+      ],
+      "ideal": "In my final-year project we built a platform with a three-person team. The challenge was a slow search feature. I profiled the queries, added indexes and caching, and reduced response time from about three seconds to under 300 milliseconds, which I verified with load tests. I learned to measure before optimising."
+    },
+    {
+      "q": "Describe a time you disagreed with a teammate. How did you handle it?",
+      "topic": "Teamwork",
+      "keywords": [
+        "disagree",
+        "listen",
+        "perspective",
+        "compromise",
+        "outcome",
+        "respect",
+        "data",
+        "team"
+      ],
+      "ideal": "A teammate and I disagreed on the database schema. I listened to their reasons, we compared both options against our requirements with a small prototype, and chose a hybrid. We stayed respectful, the decision was based on data, and the project shipped on time."
+    },
+    {
+      "q": "Tell me about a time you failed or made a mistake. What did you learn?",
+      "topic": "Resilience",
+      "keywords": [
+        "mistake",
+        "responsibility",
+        "fixed",
+        "learned",
+        "prevent",
+        "test",
+        "process",
+        "team"
+      ],
+      "ideal": "I once pushed a change that broke a form for some users because I had not tested an edge case. I told my team immediately, rolled it back, fixed it and added a test. Since then I check edge cases and use a staging environment before releasing."
+    },
+    {
+      "q": "How do you prioritise when you have several deadlines at once?",
+      "topic": "Time management",
+      "keywords": [
+        "priority",
+        "deadline",
+        "impact",
+        "communicate",
+        "plan",
+        "urgent",
+        "trade-off",
+        "list"
+      ],
+      "ideal": "I list everything, rank it by impact and urgency, and break large tasks into steps. I communicate early with stakeholders about trade-offs, ask for help or a moved deadline when something cannot fit, and review the plan daily."
+    },
+    {
+      "q": "Tell me about a time you had to learn something new quickly.",
+      "topic": "Learning agility",
+      "keywords": [
+        "learn",
+        "documentation",
+        "practice",
+        "project",
+        "time",
+        "applied",
+        "mentor",
+        "result"
+      ],
+      "ideal": "For a hackathon I had to learn React in a week. I followed the official documentation, built a small app each day, asked a mentor to review my code and then applied it to our project. We finished with a working demo."
+    },
+    {
+      "q": "Why do you want this role, and where do you see yourself in two years?",
+      "topic": "Motivation",
+      "keywords": [
+        "interest",
+        "skills",
+        "grow",
+        "goal",
+        "company",
+        "contribute",
+        "learn",
+        "team"
+      ],
+      "ideal": "I enjoy building products people use, and this role matches my skills in web development while letting me grow. In two years I want to own features end to end, mentor newer teammates and deepen my knowledge of system design while contributing to the team's goals."
+    },
+    {
+      "q": "Describe a time you helped someone else succeed.",
+      "topic": "Collaboration",
+      "keywords": [
+        "helped",
+        "explained",
+        "shared",
+        "paired",
+        "team",
+        "support",
+        "deadline",
+        "success"
+      ],
+      "ideal": "A classmate was stuck on Git conflicts before a deadline. I explained how to resolve them step by step, shared a short cheat sheet and paired with them once to support them. They delivered on time and then helped others with the same problem, which made the whole team more successful."
+    },
+    {
+      "q": "Tell me about a time you received critical feedback.",
+      "topic": "Growth mindset",
+      "keywords": [
+        "feedback",
+        "listen",
+        "changed",
+        "improve",
+        "result",
+        "specific",
+        "thank",
+        "review"
+      ],
+      "ideal": "A reviewer told me my pull requests were too large to review. I listened, asked for examples and started splitting work into smaller pieces. Reviews became faster, I got fewer bugs, and I thanked them for helping me improve."
+    }
+  ]
+}
